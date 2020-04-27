@@ -15,12 +15,21 @@ if isempty(param)
 end
 
 % compute control action
-% p = ...;
+  Q = param.Q;
+  R = param.R;
+  A = param.A;
+  B = param.B;
+  x = param.x;
+  [K,S,e] = dlqr(A,B,Q,R);
+  p = K*x;
+  param.x = A*x + B*p;
 end
 
 function param = init()
 param = compute_controller_base_parameters;
 % add additional parameters if necessary, e.g.
-% param.F = ...,
-
+  %param.F = ...,
+  if isfield(param,'x') == false
+      param.x = [3; 1; 0];
+  end
 end

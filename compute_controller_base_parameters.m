@@ -16,7 +16,7 @@ function param = compute_controller_base_parameters
     d = [w(1)+a1o*To; w(2)+a2o*To; w(3)+a3o*To];
     
     % (2) discretization
-    Ts = 60;
+    Ts = 0.1; %Ts is the sampling time, not the time horizon
     A = expm(Ac*Ts);
     B = inv(Ac)*(A-eye(3))*Bc;
     Bd = inv(Ac)*(A-eye(3))*Bdc;
@@ -63,14 +63,14 @@ function param = compute_controller_base_parameters
     Xcons = Tcons-[T_sp(1)*ones(1,2); T_sp(2)*ones(1,2); T_sp(3)*ones(1,2)];
     
     % (5) LQR cost function
-%     Q = ...
-%     R = ...
+    Q = 1e-5*eye(3);
+    R = 1e-5*eye(2);
     
     % put everything together
     param.A = A;
     param.B = B;
-%     param.Q = Q;
-%     param.R = R;
+    param.Q = Q;
+    param.R = R;
     param.T_sp = T_sp;
     param.p_sp = p_sp;
     param.Ucons = Ucons;
