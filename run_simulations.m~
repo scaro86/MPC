@@ -21,10 +21,5 @@ else
 end
 %% Exercise 6: Compute the infinite horizon cost under the LQR control law
 [K,~,] = dlqr(param.A,param.B,param.Q,param.R);
-costlqr = 0;
-x = x0_1;
-for i = 1:1000
-    costlqr = costlqr + x0_1'*(param.Q + K'*param.R*K)*x;
-    x = (param.A-param.B*K)*x;
-end
+costlqr = compute_cost(x0_1,param.A-param.B*K,K,param.Q,param.R,1000);
 fprintf('Cost of the optimal LQR controller: %.2f\n',costlqr);
