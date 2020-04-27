@@ -13,8 +13,8 @@ x0_1 = [3; 1; 0];
 T0_1 = param.T_sp + x0_1;
 [T, p] = simulate_truck(T0_1, @controller_lqr, scen1);
 % check if the reference is approached reasonably fast
-dist = abs(param.T_sp - T(30))
-if dist > 0.2*x0_1
+dist = norm(param.T_sp - T(:,30));
+if dist > 0.2*norm(x0_1)
     disp('your control is too slow')
 else
     disp('your control is perfect')

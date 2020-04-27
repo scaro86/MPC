@@ -16,7 +16,7 @@ function param = compute_controller_base_parameters
     d = [w(1)+a1o*To; w(2)+a2o*To; w(3)+a3o*To];
     
     % (2) discretization
-    Ts = 0.1; %Ts is the sampling time, not the time horizon
+    Ts = 60;
     A = expm(Ac*Ts);
     B = inv(Ac)*(A-eye(3))*Bc;
     Bd = inv(Ac)*(A-eye(3))*Bdc;
