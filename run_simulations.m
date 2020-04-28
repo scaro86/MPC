@@ -20,7 +20,7 @@ else
     disp('your control is perfect')
 end
 %% Exercise 6: Compute the infinite horizon cost under the LQR control law
-[K,~,] = dlqr(param.A,param.B,param.Q,param.R);
+K = -dlqr(param.A,param.B,param.Q,param.R);
 costlqr = 0;
 x = x0_1;
 for i = 1:1000
