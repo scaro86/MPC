@@ -13,18 +13,13 @@ x0_1 = [3; 1; 0];
 T0_1 = param.T_sp + x0_1;
 [T, p] = simulate_truck(T0_1, @controller_lqr, scen1);
 % check if the reference is approached reasonably fast
-dist = norm(param.T_sp - T(:,30));
-if dist > 0.2*norm(x0_1)
+dist = abs(param.T_sp - T(30))
+if dist > 0.2*x0_1
     disp('your control is too slow')
 else
     disp('your control is perfect')
 end
 %% Exercise 6: Compute the infinite horizon cost under the LQR control law
 [K,~,] = dlqr(param.A,param.B,param.Q,param.R);
-costlqr = 0;
-x = x0_1;
-for i = 1:1000
-    costlqr = costlqr + x0_1'*(param.Q + K'*param.R*K)*x;
-    x = (param.A-param.B*K)*x;
-end
+costlqr = compute_cost(x0_1,param.A-param.B*K,K,param.Q,param.R,1000);
 fprintf('Cost of the optimal LQR controller: %.2f\n',costlqr);
