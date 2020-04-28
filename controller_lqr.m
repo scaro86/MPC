@@ -15,12 +15,15 @@ if isempty(param)
 end
 
 % compute control action
-% p = ...;
+  K = -dlqr(param.A,param.B,param.Q,param.R);
+  x = T - param.T_sp;
+  u = K*x;
+  p = u + param.p_sp;
 end
 
 function param = init()
 param = compute_controller_base_parameters;
 % add additional parameters if necessary, e.g.
-% param.F = ...,
-
+  %param.F = ...,
 end
+
