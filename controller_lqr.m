@@ -15,7 +15,7 @@ if isempty(param)
 end
 
 % compute control action
-  [K,~,] = dlqr(param.A,param.B,param.Q,param.R);
+  K = -dlqr(param.A,param.B,param.Q,param.R);
   x = T - param.T_sp;
   u = K*x;
   p = u + param.p_sp;
