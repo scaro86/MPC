@@ -11,6 +11,7 @@ clear controller_lqr;
 % execute simulation starting from T0_1 using lqr controller with scenario 1
 x0_1 = [3; 1; 0];
 T0_1 = param.T_sp + x0_1;
+figure(1)
 [T_LQR_1, p_LQR_1] = simulate_truck(T0_1, @controller_lqr, scen1);
 % check if the reference is approached reasonably fast
 dist = norm(param.T_sp - T_LQR_1(:,30));
@@ -28,5 +29,7 @@ T0_2 = param.T_sp + x0_2;
 %% Exercise 8: Compute set X_LQR of possible initial conditions
 
 %% Exercise 9: execute simulation with MPC_1
+figure(3)
 [T_MPC_1, p_MPC_1] = simulate_truck(T0_1, @controller_mpc_1, scen1);
+figure(4)
 [T_MPC_2, p_MPC_2] = simulate_truck(T0_2, @controller_mpc_1, scen1);
