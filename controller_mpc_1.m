@@ -11,7 +11,7 @@ persistent param yalmip_optimizer
 
 % initialize controller, if not done already
 if isempty(param)
-    [param, yalmip_optimizer] = init();
+    param = compute_controller_base_parameters; % get basic controller parameters
 end
 
 %% evaluate control action by solving MPC problem, e.g.
@@ -23,11 +23,6 @@ end
 end
 
 function [param, yalmip_optimizer] = init()
-% initializes the controller on first call and returns parameters and
-% Yalmip optimizer object
-
-param = compute_controller_base_parameters; % get basic controller parameters
-
 %% implement your MPC using Yalmip here, e.g.
 % N = 30;
 % nx = size(param.A,1);
