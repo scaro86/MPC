@@ -28,3 +28,10 @@ for i = 1:1000
     x = (param.A-param.B*K)*x;
 end
 fprintf('Cost of the optimal LQR controller: %.2f\n',costlqr);
+
+%% Exercise 7 : closed loop simulation of LQR controller
+x0_2 = [-1 -0.3 -4.5]';
+T0_2 = param.T_sp + x0_2;
+[T, p] = simulate_truck(T0_2, @controller_lqr, scen1);
+
+%% Exercise 8 : Computation of X_lqr set
