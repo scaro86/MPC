@@ -1,0 +1,5 @@
+#running Matlab file
+*.csv
+
+#mac os file 
+*.m~
