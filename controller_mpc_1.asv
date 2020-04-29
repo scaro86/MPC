@@ -9,7 +9,7 @@ function p = controller_mpc_1(T)
 persistent param yalmip_optimizer
 % get parameters
 if isempty(param)
-    param = compute_controller_base_parameters;
+    param = compute_controller_base_parameters; % get basic controller parameters
 end
 x0 = T - param.T_sp;
 Ucons = param.Ucons;
@@ -40,7 +40,6 @@ yalmip_opt = optimize(constraints,objective,ops);
 if yalmip_opt.problem == 0
  % Extract and display value
  u = value(U{1});
- p = u + param.p_sp;
 else
  display('Hmm, something went wrong!');
  yalmip_opt.info
