@@ -7,6 +7,8 @@ function [A_x, b_x] = compute_X_LQR
     % get basic controller parameters
     param = compute_controller_base_parameters;
     %% Here you need to implement the X_LQR computation and assign the result.
+    % computes a control invariant set for LTI system x^+ = A* x+B*u
+    
     A_x = ...
     b_x = ...
 end
