@@ -30,6 +30,8 @@ for k = 1:N
   constraints = [constraints, Xcons(:,1)<=X{k}<=Xcons(:,2)];%Why was this k+1?
   constraints = [constraints, Ucons(:,1)<=U{k}<=Ucons(:,2)];
   objective = objective + X{k}'*param.Q*X{k}+U{k}'*param.R*U{k};% on the yalmip page they use norm(Q*x,1) + norm(R*u{k},1), maybe something like this is computationally faster
+%Maybe also faster when the param are only computed once and not always
+%called from the struct
 end
 %%
 lf = compute_infinite_cost_LQR(X{N+1});%isn't this in function of x0?

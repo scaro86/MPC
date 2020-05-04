@@ -15,9 +15,7 @@ if isempty(param)
 end
 
 %% evaluate control action by solving MPC problem, e.g.
-x0 = T - param.T_sp;
-Ucons = param.Ucons;
-Xcons = param.Xcons;
+
 
 [u_mpc,errorcode] = yalmip_optimizer();
 if (errorcode ~= 0)
