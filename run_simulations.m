@@ -12,6 +12,8 @@ clear controller_lqr;
 x0_1 = [3; 1; 0];
 T0_1 = param.T_sp + x0_1;
 figure(1)
+title('Simulation with LQR control, T01');
+hold on;
 [T_LQR_1, p_LQR_1] = simulate_truck(T0_1, @controller_lqr, scen1);
 % check if the reference is approached reasonably fast
 dist = norm(param.T_sp - T_LQR_1(:,30));
@@ -27,16 +29,27 @@ fprintf('Cost of the optimal LQR controller: %.2f\n',costlqr);
 x0_2 = [-1 -0.3 -4.5]';
 T0_2 = param.T_sp + x0_2;
 figure(2)
+title('Simulation with LQR control, T02');
 [T_LQR_2, p_LQR_2] = simulate_truck(T0_2, @controller_lqr, scen1);
 % Big constraint violation from k=2 to k=53
 %% Exercise 8 : Computation of X_LQR set
 [A_x, b_x] = compute_X_LQR;
 %% Exercise 9: execute simulation with MPC_1
 figure(4)
+title('Simulation with MPC1 control, T01');
 [T_MPC_11, p_MPC_11] = simulate_truck(T0_1, @controller_mpc_1, scen1);
 figure(5)
+title('Simulation with MPC1 control, T02');
 [T_MPC_12, p_MPC_12] = simulate_truck(T0_2, @controller_mpc_1, scen1);
 %% Exercise 12: execute simulation with MPC_2
 figure(6)
+title('Simulation with MPC2 control, T01');
 [T_MPC_21, p_MPC_21] = simulate_truck(T0_1, @controller_mpc_2, scen1);
+%% Exercise 15: execute simulation with MPC_3
+figure(7)
+title('Simulation with MPC3 control, T01');
+[T_MPC_31, p_MPC_31] = simulate_truck(T0_1, @controller_mpc_3, scen1);
+figure(8)
+title('Simulation with MPC3 control, T02');
+[T_MPC_32, p_MPC_32] = simulate_truck(T0_2, @controller_mpc_3, scen1);
 
