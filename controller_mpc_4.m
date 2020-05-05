@@ -32,9 +32,9 @@ Q = param.Q;
 R = param.R;
 [A_x, b_x] = compute_X_LQR;
 % define penalty parameters
-S = 1e-1*eye(6);
+S = 1*eye(6);
 Sn = 1*eye(length(b_x));
-v = 1e-3*ones(1,6);
+v = 10*ones(1,6); v(2) = 20; v(5) = 20;
 vn = 1*ones(1,length(b_x));
 %% evaluate control actuation
 N = 30;
@@ -51,7 +51,7 @@ objective = 0;
 constraints = [X{1}==x0, A_x*X{31}<=b_x+epsN];
 for k = 1:N
   constraints = [constraints, X{k+1}==A*X{k}+B*U{k}];
-  constraints = [constraints, Xcons(:,1)-eps{k}(1:3)<=X{k+1}<=Xcons(:,2)+eps{k}(4:6)];
+  constraints = [constraints, (Xcons(:,1)-eps{k}(1:3))<=X{k+1}<=(Xcons(:,2)+eps{k}(4:6))];
   constraints = [constraints, Ucons(:,1)<=U{k}<=Ucons(:,2)];
   constraints = [constraints, zeros(6,1)<=eps{k}];
   objective = objective + X{k}'*Q*X{k}+U{k}'*R*U{k}+v*eps{k}+eps{k}'*S*eps{k};

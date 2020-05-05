@@ -51,16 +51,16 @@ sgtitle('Simulation with MPC3 control, T01');
 figure(8)
 sgtitle('Simulation with MPC3 control, T02');
 [T_MPC_32, p_MPC_32] = simulate_truck(T0_2, @controller_mpc_3, scen1);
-% Exercise 17: execute simulation with MPC_3, T0_3
+%% Exercise 17: execute simulation with MPC_3, T0_3
 T0_3 = [12;12;12];
 figure(9)
 sgtitle('Simulation with MPC3 control, T03');
 [T_MPC_33, p_MPC_33] = simulate_truck(T0_3, @controller_mpc_3, scen1);
-% Exercise 18: execute simulation with MPC_4, T0_3
+%% Exercise 18: execute simulation with MPC_4, T0_3
 figure(10)
 sgtitle('Simulation with MPC4 control, T03');
 [T_MPC_43, p_MPC_43] = simulate_truck(T0_3, @controller_mpc_4, scen1);
-% Exercise 19: execute simulation with MPC_4, T0_2
+%% Exercise 19: execute simulation with MPC_4, T0_2
 figure(11)
 sgtitle('Simulation with MPC4 control, T02');
 [T_MPC_42, p_MPC_42] = simulate_truck(T0_2, @controller_mpc_4, scen1);
