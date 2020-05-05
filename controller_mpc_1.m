@@ -53,7 +53,7 @@ end
 lf = compute_infinite_cost_LQR(X{N+1});
 objective = objective + lf;
 
-ops = sdpsettings('verbose',0);
+ops = sdpsettings('verbose',0,'solver','quadprog');
 yalmip_opt = optimizer(constraints,objective,ops,x0,U{1});
 param.calc_done = "true";
 end

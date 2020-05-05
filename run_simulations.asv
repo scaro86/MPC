@@ -38,4 +38,4 @@ figure(4)
 %% Exercise 12: execute simulation with MPC_2
 param.calc_done = "false";
 figure(5)
-[T_MPC_21, p_MPC_21] = simulate_truck(T0_1, @controller_mpc_2, scen1);
+[T_MPC_21, p_MPC_21] = simulate_truck(T0_1, @controller_mpc_1, scen1);
