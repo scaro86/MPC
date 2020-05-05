@@ -30,6 +30,12 @@ T0_2 = param.T_sp + x0_2;
 % Big constraint violation from k=2 to k=53
 %% Exercise 8 : Computation of X_lqr set
 [A_x, b_x] = compute_X_LQR;
+K = -dlqr(param.A,param.B,param.Q,param.R);
+systemLQR = LTISystem('A', param.A+param.B*K);
+Xp = Polyhedron('A',A_x, 'b', b_x);
+systemLQR.x.with('setConstraint');
+systemLQR.x.setConstraint = Xp;
+X_LQR = systemLQR.invariantSet();
 %% Exercise 9: execute simulation with MPC_1
 figure(3)
 figure(4)
