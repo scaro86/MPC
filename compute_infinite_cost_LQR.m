@@ -8,7 +8,7 @@ end
 K = -dlqr(param.A,param.B,param.Q,param.R);
 costlqr = 0;
 x = x0;
-for i = 1:1000
+for i = 1:1000 %the infinite horizon cost is approximated by using a large N
     costlqr = costlqr + x'*(param.Q + K'*param.R*K)*x;
     x = (param.A+param.B*K)*x;
 end

@@ -23,13 +23,10 @@ end
 %% Exercise 6: Compute the infinite horizon cost under the LQR control law
 costlqr = compute_infinite_cost_LQR(x0_1);
 fprintf('Cost of the optimal LQR controller: %.2f\n',costlqr);
-%% Exercise 7 : closed loop simulation of LQR controller
-x0_2 = [-1 -0.3 -4.5]';
+%% Exercise 7: execute simulation with LQR, x0_2
+x0_2 = [-1; -0.3; -4.5];
 T0_2 = param.T_sp + x0_2;
-[T, p] = simulate_truck(T0_2, @controller_lqr, scen1);
-% Big constraint violation from k=2 to k=53
-%% Exercise 8 : Computation of X_lqr set
-[A_x, b_x] = compute_X_LQR;
+%% Exercise 8: Compute set X_LQR of possible initial conditions
 
 %% Exercise 9: execute simulation with MPC_1
 param.calc_done = "false";
@@ -41,4 +38,4 @@ figure(4)
 %% Exercise 12: execute simulation with MPC_2
 param.calc_done = "false";
 figure(5)
-[T_MPC_21, p_MPC_21] = simulate_truck(T0_1, @controller_mpc_2, scen1);
+[T_MPC_21, p_MPC_21] = simulate_truck(T0_1, @controller_mpc_1, scen1);
