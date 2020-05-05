@@ -8,18 +8,17 @@
 function p = controller_mpc_2(T)
 % controller variables
 persistent param yalmip_optimizer
-
-% initialize controller, if not done already
+% get parameters
 if isempty(param)
-    [param, yalmip_optimizer] = init();
+    param = compute_controller_base_parameters;
 end
-
-%% evaluate control action by solving MPC problem, e.g.
 x0 = T - param.T_sp;
-Ucons = param.Ucons;
-Xcons = param.Xcons;
-
-[u_mpc,errorcode] = yalmip_optimizer();
+% do optimization based on sdpvar x0 if not done already
+if (param.calc_done == "false")
+    [yalmip_optimizer, param] = mpc_2_optimizer(param);
+end
+%% evaluate control action by solving MPC problem
+[u_mpc,errorcode] = yalmip_optimizer(x0);
 if (errorcode ~= 0)
       warning('MPC infeasible');
 end
@@ -27,33 +26,34 @@ end
 p = u_mpc + param.p_sp;
 end
 
-function [param, yalmip_optimizer] = init()
-% initializes the controller on first call and returns parameters and
-% Yalmip optimizer object
-
-param = compute_controller_base_parameters; % get basic controller parameters
+function [yalmip_opt, param] = mpc_2_optimizer(param)
+% get parameters
+Ucons = param.Ucons;
+Xcons = param.Xcons;
+A = param.A;
+B = param.B;
 Q = param.Q;
 R = param.R;
-%% implement your MPC using Yalmip here, e.g.
+%% evaluate control actuation
 N = 30;
-nx = size(param.A,1);
-nu = size(param.B,2);
-
-U = sdpvar(repmat(nu,1,N-1),repmat(1,1,N-1),'full');
-X = sdpvar(repmat(nx,1,N),repmat(1,1,N),'full');
-
-objective = 0;
+nx = size(A,1);
+nu = size(B,2);
+% define symbolic decision values
+U = sdpvar(repmat(nu,1,N),repmat(1,1,N),'full');
+X = sdpvar(repmat(nx,1,N+1),repmat(1,1,N+1),'full');
 x0 = sdpvar(3,1);
-constraints = [X{1}==x0,X{30}==0];
-for k = 1:N-1
-  constraints = [constraints, X{k+1}==param.A*X{k}+param.B*U{k}];
-  constraints = [constraints, Xcons(:,1)<=X{k}<=Xcons(:,2)];
+%define constraints and objective function
+objective = 0;
+constraints = [X{1}==x0, X{31}==zeros(3,1)];
+for k = 1:N
+  constraints = [constraints, X{k+1}==A*X{k}+B*U{k}];
+  constraints = [constraints, Xcons(:,1)<=X{k+1}<=Xcons(:,2)];
   constraints = [constraints, Ucons(:,1)<=U{k}<=Ucons(:,2)];
-  objective = objective + X{k}'*Q*X{k}+U{k}'*R*U{k} ;
+  objective = objective + X{k}'*Q*X{k}+U{k}'*R*U{k};
 end
-objective = objective + 0;
 
 ops = sdpsettings('verbose',0,'solver','quadprog');
 fprintf('JMPC_dummy = %f',value(objective));
-yalmip_optimizer = optimizer(constraints,objective,ops,x0,U{1});
+yalmip_opt = optimizer(constraints,objective,ops,x0,U{1});
+param.calc_done = "true";
 end

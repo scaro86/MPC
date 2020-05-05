@@ -77,5 +77,6 @@ function param = compute_controller_base_parameters
     param.Xcons = Xcons;
     param.Tcons = Tcons;
     param.Pcons = Pcons;
+    param.calc_done = "false";
 end
 
