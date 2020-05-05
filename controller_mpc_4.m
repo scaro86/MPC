@@ -32,10 +32,10 @@ Q = param.Q;
 R = param.R;
 [A_x, b_x] = compute_X_LQR;
 % define penalty parameters
-S = 1e-3*eye(6);
-Sn = 1e-3*eye(length(b_x));
-v = 1e-5*ones(1,6);
-vn = 1e-5*ones(1,length(b_x));
+S = 1e-1*eye(6);
+Sn = 1*eye(length(b_x));
+v = 1e-3*ones(1,6);
+vn = 1*ones(1,length(b_x));
 %% evaluate control actuation
 N = 30;
 nx = size(A,1);
