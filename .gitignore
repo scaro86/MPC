@@ -1,0 +1,9 @@
+#running Matlab file
+*.asv
+
+#mac os file 
+*.m~
+
+#mes essais
+
+essai.m
