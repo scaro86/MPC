@@ -35,10 +35,6 @@ objective = objective + lf;
 ops = sdpsettings('verbose',0);
 yalmip_opt = optimizer(constraints,objective,ops,x0_sdp,U{1});
 [u, errorcode] = yalmip_opt(x0);
-% Analyze error flags
-if (errorcode ~= 0)
-      warning('MPC infeasible');
-end
 % % Analyze error flags
 % if yalmip_opt.problem == 0
 %  % Extract and display value

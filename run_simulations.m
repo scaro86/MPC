@@ -29,7 +29,9 @@ T0_2 = param.T_sp + x0_2;
 %% Exercise 8: Compute set X_LQR of possible initial conditions
 
 %% Exercise 9: execute simulation with MPC_1
+param.calc_done = "false";
 figure(3)
 [T_MPC_1, p_MPC_1] = simulate_truck(T0_1, @controller_mpc_1, scen1);
+param.calc_done = "false";
 figure(4)
 [T_MPC_2, p_MPC_2] = simulate_truck(T0_2, @controller_mpc_1, scen1);

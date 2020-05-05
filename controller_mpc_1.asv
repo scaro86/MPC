@@ -14,18 +14,24 @@ end
 x0 = T - param.T_sp;
 % do optimization based on sdpvar x0 if not done already
 if (param.calc_done == "false")
-    [yalmip_optimizer, param] = mpc_1_optimizer(param);
+    yalmip_optimizer = mpc_1_optimizer;
 end
 % get optimal u
-[u, errorcode] = yalmip_optimizer(x0);
-p = u + param.p_sp;
+[u, 
 % Analyze error flags
-if (errorcode ~= 0)
-      warning('MPC infeasible');
+if yalmip_opt.problem == 0
+ % Extract and display value
+ u = value(U{1});
+ p = u + param.p_sp;
+else
+ display('Hmm, something went wrong!');
+ yalmip_opt.info
+ yalmiperror(yalmip_opt.problem)
 end
 end
 
-function [yalmip_opt, param] = mpc_1_optimizer(param)
+function yalmip_optimizer = mpc_1_optimizer
+persistent param yalmip_optimizer
 % get parameters
 Ucons = param.Ucons;
 Xcons = param.Xcons;
@@ -54,6 +60,7 @@ lf = compute_infinite_cost_LQR(X{N+1});
 objective = objective + lf;
 
 ops = sdpsettings('verbose',0);
-yalmip_opt = optimizer(constraints,objective,ops,x0,U{1});
+yalmip_optimizer = optimizer(constraints,objective,ops,x0,U{1});
 param.calc_done = "true";
+
 end
