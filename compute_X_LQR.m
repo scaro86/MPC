@@ -9,8 +9,12 @@ function [A_x, b_x] = compute_X_LQR
     %% Here you need to implement the X_LQR computation and assign the result.
     % computes a control invariant set for LTI system x^+ = A*x+B*u
     K = -dlqr(param.A,param.B,param.Q,param.R);
-    %Xp = Polyhedron('A',[eye(3); -eye(3); K; -K], 'b', [param.Xcons(:,2);-param.Xcons(:,1); param.Ucons(:,2);-param.Ucons(:,1)]);
-    A_x = [eye(3); -eye(3); K; -K];
-    b_x = [param.Xcons(:,2);-param.Xcons(:,1); param.Ucons(:,2);-param.Ucons(:,1)];
+    systemLQR = LTISystem('A', param.A+param.B*K);
+    Xp = Polyhedron('A',[eye(3); -eye(3); K; -K], 'b', [param.Xcons(:,2);-param.Xcons(:,1); param.Ucons(:,2);-param.Ucons(:,1)]);
+    systemLQR.x.with('setConstraint');
+    systemLQR.x.setConstraint = Xp;
+    X_LQR = systemLQR.invariantSet();
+    A_x =X_LQR.A ;
+    b_x =X_LQR.b ;
 end
 

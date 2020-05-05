@@ -42,3 +42,4 @@ figure(4)
 param.calc_done = "false";
 figure(5)
 [T_MPC_21, p_MPC_21] = simulate_truck(T0_1, @controller_mpc_2, scen1);
+
