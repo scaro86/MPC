@@ -6,17 +6,12 @@
 % OUTPUT:
 %   p: Cooling power, dimension (2,1)
 function p = controller_mpc_2(T)
-% controller variables
 persistent param yalmip_optimizer
-% get parameters
+% get parameters and do optimization based on sdpvar x0
 if isempty(param)
-    param = compute_controller_base_parameters;
+    [yalmip_optimizer, param] = mpc_2_optimizer();
 end
 x0 = T - param.T_sp;
-% do optimization based on sdpvar x0 if not done already
-if (param.calc_done == "false")
-    [yalmip_optimizer, param] = mpc_2_optimizer(param);
-end
 %% evaluate control action by solving MPC problem
 [u_mpc,errorcode] = yalmip_optimizer(x0);
 if (errorcode ~= 0)
@@ -26,8 +21,9 @@ end
 p = u_mpc + param.p_sp;
 end
 
-function [yalmip_opt, param] = mpc_2_optimizer(param)
+function [yalmip_opt, param] = mpc_2_optimizer()
 % get parameters
+param = compute_controller_base_parameters;
 Ucons = param.Ucons;
 Xcons = param.Xcons;
 A = param.A;
@@ -55,5 +51,4 @@ end
 ops = sdpsettings('verbose',0,'solver','quadprog');
 fprintf('JMPC_dummy = %f',value(objective));
 yalmip_opt = optimizer(constraints,objective,ops,x0,U{1});
-param.calc_done = "true";
 end

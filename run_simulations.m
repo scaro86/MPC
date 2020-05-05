@@ -32,14 +32,11 @@ figure(2)
 %% Exercise 8 : Computation of X_LQR set
 [A_x, b_x] = compute_X_LQR;
 %% Exercise 9: execute simulation with MPC_1
-param.calc_done = "false";
-figure(3)
-[T_MPC_11, p_MPC_11] = simulate_truck(T0_1, @controller_mpc_1, scen1);
-param.calc_done = "false";
 figure(4)
+[T_MPC_11, p_MPC_11] = simulate_truck(T0_1, @controller_mpc_1, scen1);
+figure(5)
 [T_MPC_12, p_MPC_12] = simulate_truck(T0_2, @controller_mpc_1, scen1);
 %% Exercise 12: execute simulation with MPC_2
-param.calc_done = "false";
-figure(5)
+figure(6)
 [T_MPC_21, p_MPC_21] = simulate_truck(T0_1, @controller_mpc_2, scen1);
 
