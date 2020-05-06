@@ -44,6 +44,9 @@ sgtitle('Simulation with MPC1 control, T02');
 figure(6)
 sgtitle('Simulation with MPC2 control, T01');
 [T_MPC_21, p_MPC_21] = simulate_truck(T0_1, @controller_mpc_2, scen1);
+figure(16)
+sgtitle('Simulation with MPC2 control, T02');
+[T_MPC_22, p_MPC_22] = simulate_truck(T0_2, @controller_mpc_2, scen1);
 %% Exercise 15: execute simulation with MPC_3
 figure(7)
 sgtitle('Simulation with MPC3 control, T01');
