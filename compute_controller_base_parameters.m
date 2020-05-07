@@ -63,8 +63,8 @@ function param = compute_controller_base_parameters
     Xcons = Tcons-[T_sp(1)*ones(1,2); T_sp(2)*ones(1,2); T_sp(3)*ones(1,2)];
     
     % (5) LQR cost function
-    Q = 1e-1*eye(3);%e4 other option w/ higher cost
-    R = 2*1e-6*eye(2);%.17
+    Q = 1e-1*eye(3);
+    R = 2*1e-6*eye(2);
     
     % put everything together
     param.A = A;
@@ -77,6 +77,5 @@ function param = compute_controller_base_parameters
     param.Xcons = Xcons;
     param.Tcons = Tcons;
     param.Pcons = Pcons;
-    param.calc_done = "false";
 end
 
