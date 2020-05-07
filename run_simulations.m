@@ -33,6 +33,7 @@ sgtitle('Simulation with LQR control, T02');
 % Big constraint violation from k=2 to k=53
 %% Exercise 8 : Computation of X_LQR set
 [A_x, b_x] = compute_X_LQR;
+
 %% Exercise 9: execute simulation with MPC_1
 figure(4)
 sgtitle('Simulation with MPC1 control, T01');
