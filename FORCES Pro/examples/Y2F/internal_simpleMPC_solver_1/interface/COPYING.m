@@ -1,4 +1,4 @@
-% internal_quadprog_1 : A fast customized optimization solver.
+% internal_simpleMPC_solver_1 : A fast customized optimization solver.
 % 
 % Copyright (C) 2013-2020 EMBOTECH AG [info@embotech.com]. All rights reserved.
 % 

@@ -1,5 +1,5 @@
 /*
-internal_quadprog_1 : A fast customized optimization solver.
+internal_simpleMPC_solver_1 : A fast customized optimization solver.
 
 Copyright (C) 2013-2020 EMBOTECH AG [info@embotech.com]. All rights reserved.
 
@@ -24,7 +24,7 @@ jurisdiction in case of any dispute.
 
 
 #define S_FUNCTION_LEVEL 2
-#define S_FUNCTION_NAME internal_quadprog_1_simulinkBlockcompact
+#define S_FUNCTION_NAME internal_simpleMPC_solver_1_simulinkBlock
 
 #include "simstruc.h"
 
@@ -41,7 +41,7 @@ FILE * __cdecl __iob_func(void)
 #endif
 
 /* include FORCES functions and defs */
-#include "../include/internal_quadprog_1.h" 
+#include "../include/internal_simpleMPC_solver_1.h" 
 
 /* SYSTEM INCLUDES FOR TIMING ------------------------------------------ */
 
@@ -53,7 +53,7 @@ FILE * __cdecl __iob_func(void)
 #include "rtwtypes.h"
 #endif
 
-typedef internal_quadprog_1interface_float internal_quadprog_1nmpc_float;
+typedef internal_simpleMPC_solver_1interface_float internal_simpleMPC_solver_1nmpc_float;
 
 
 
@@ -85,7 +85,7 @@ static void mdlInitializeSizes(SimStruct *S)
     if (!ssSetNumInputPorts(S, 1)) return;
     	
 	/* Input Port 0 */
-    ssSetInputPortMatrixDimensions(S,  0, 6, 1);
+    ssSetInputPortMatrixDimensions(S,  0, 2, 1);
     ssSetInputPortDataType(S, 0, SS_DOUBLE);
     ssSetInputPortComplexSignal(S, 0, COMPLEX_NO); /* no complex signals suppported */
     ssSetInputPortDirectFeedThrough(S, 0, 1); /* Feedthrough enabled */
@@ -96,7 +96,7 @@ static void mdlInitializeSizes(SimStruct *S)
     if (!ssSetNumOutputPorts(S, 1)) return;    
 		
 	/* Output Port 0 */
-    ssSetOutputPortMatrixDimensions(S,  0, 2, 1);
+    ssSetOutputPortMatrixDimensions(S,  0, 1, 1);
     ssSetOutputPortDataType(S, 0, SS_DOUBLE);
     ssSetOutputPortComplexSignal(S, 0, COMPLEX_NO); /* no complex signals suppported */
 
@@ -192,21 +192,21 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 	/* Simulink data */
 	const real_T *p_1 = (const real_T*) ssGetInputPortSignal(S,0);
 	
-    real_T *outputs = (real_T*) ssGetOutputPortSignal(S,0);
+    real_T *o_1 = (real_T*) ssGetOutputPortSignal(S,0);
 	
 	
 
 	/* Solver data */
-	internal_quadprog_1_params params;
-	internal_quadprog_1_output output;
-	internal_quadprog_1_info info;	
+	internal_simpleMPC_solver_1_params params;
+	internal_simpleMPC_solver_1_output output;
+	internal_simpleMPC_solver_1_info info;	
 	solver_int32_default exitflag;
 
 	/* Extra NMPC data */
 	
 
 	/* Copy inputs */
-	for( i=0; i<6; i++)
+	for( i=0; i<2; i++)
 	{ 
 		params.p_1[i] = (double) p_1[i]; 
 	}
@@ -215,7 +215,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 
 	
 
-    #if SET_PRINTLEVEL_internal_quadprog_1 > 0
+    #if SET_PRINTLEVEL_internal_simpleMPC_solver_1 > 0
 		/* Prepare file for printfs */
         fp = fopen("stdout_temp","w+");
 		if( fp == NULL ) 
@@ -226,9 +226,9 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 	#endif
 
 	/* Call solver */
-	exitflag = internal_quadprog_1_solve(&params, &output, &info, fp );
+	exitflag = internal_simpleMPC_solver_1_solve(&params, &output, &info, fp );
 
-	#if SET_PRINTLEVEL_internal_quadprog_1 > 0
+	#if SET_PRINTLEVEL_internal_simpleMPC_solver_1 > 0
 		/* Read contents of printfs printed to file */
 		rewind(fp);
 		while( (i = fgetc(fp)) != EOF ) 
@@ -243,13 +243,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 	/* Copy outputs */
 	for( i=0; i<1; i++)
 	{ 
-		outputs[i] = (real_T) output.o_1[i]; 
-	}
-
-	k=1; 
-	for( i=0; i<1; i++)
-	{ 
-		outputs[k++] = (real_T) output.o_2[i]; 
+		o_1[i] = (real_T) output.o_1[i]; 
 	}
 
 	

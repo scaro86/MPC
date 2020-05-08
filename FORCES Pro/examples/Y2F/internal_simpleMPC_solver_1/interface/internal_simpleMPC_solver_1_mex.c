@@ -1,5 +1,5 @@
 /*
-internal_quadprog_1 : A fast customized optimization solver.
+internal_simpleMPC_solver_1 : A fast customized optimization solver.
 
 Copyright (C) 2013-2020 EMBOTECH AG [info@embotech.com]. All rights reserved.
 
@@ -24,7 +24,7 @@ jurisdiction in case of any dispute.
 
 #include "mex.h"
 #include "math.h"
-#include "../include/internal_quadprog_1.h"
+#include "../include/internal_simpleMPC_solver_1.h"
 #ifndef SOLVER_STDIO_H
 #define SOLVER_STDIO_H
 #include <stdio.h>
@@ -69,9 +69,9 @@ void copyMValueToC_double(double * src, double * dest)
 
 
 /* Some memory for mex-function */
-internal_quadprog_1_params params;
-internal_quadprog_1_output output;
-internal_quadprog_1_info info;
+internal_simpleMPC_solver_1_params params;
+internal_simpleMPC_solver_1_output output;
+internal_simpleMPC_solver_1_info info;
 
 /* THE mex-function */
 void mexFunction( solver_int32_default nlhs, mxArray *plhs[], solver_int32_default nrhs, const mxArray *prhs[] )  
@@ -87,17 +87,17 @@ void mexFunction( solver_int32_default nlhs, mxArray *plhs[], solver_int32_defau
 	solver_int32_default i;
 	solver_int32_default exitflag;
 	const solver_int8_default *fname;
-	const solver_int8_default *outputnames[2] = {"o_1","o_2"};
+	const solver_int8_default *outputnames[1] = {"o_1"};
 	const solver_int8_default *infofields[16] = { "it", "it2opt", "res_eq", "res_ineq",  "pobj",  "dobj",  "dgap", "rdgap",  "mu",  "mu_aff",  "sigma",  "lsit_aff",  "lsit_cc",  "step_aff",   "step_cc",  "solvetime"};
 	
 	/* Check for proper number of arguments */
     if (nrhs != 1) 
 	{
-        mexErrMsgTxt("This function requires exactly 1 input: PARAMS struct.\nType 'help internal_quadprog_1_mex' for details.");
+        mexErrMsgTxt("This function requires exactly 1 input: PARAMS struct.\nType 'help internal_simpleMPC_solver_1_mex' for details.");
     }    
 	if (nlhs > 3) 
 	{
-        mexErrMsgTxt("This function returns at most 3 outputs.\nType 'help internal_quadprog_1_mex' for details.");
+        mexErrMsgTxt("This function returns at most 3 outputs.\nType 'help internal_simpleMPC_solver_1_mex' for details.");
     }
 
 	/* Check whether params is actually a structure */
@@ -117,19 +117,19 @@ void mexFunction( solver_int32_default nlhs, mxArray *plhs[], solver_int32_defau
     {
     mexErrMsgTxt("PARAMS.p_1 must be a double.");
     }
-    if( mxGetM(par) != 6 || mxGetN(par) != 1 ) 
+    if( mxGetM(par) != 2 || mxGetN(par) != 1 ) 
 	{
-    mexErrMsgTxt("PARAMS.p_1 must be of size [6 x 1]");
+    mexErrMsgTxt("PARAMS.p_1 must be of size [2 x 1]");
     }
 #endif	 
 	if ( (mxGetN(par) != 0) && (mxGetM(par) != 0) )
 	{
-		copyMArrayToC_double(mxGetPr(par), params.p_1,6);
+		copyMArrayToC_double(mxGetPr(par), params.p_1,2);
 
 	}
 
 
-	#if SET_PRINTLEVEL_internal_quadprog_1 > 0
+	#if SET_PRINTLEVEL_internal_simpleMPC_solver_1 > 0
 		/* Prepare file for printfs */
         fp = fopen("stdout_temp","w+");
 		if( fp == NULL ) 
@@ -140,9 +140,9 @@ void mexFunction( solver_int32_default nlhs, mxArray *plhs[], solver_int32_defau
 	#endif
 
 	/* call solver */
-	exitflag = internal_quadprog_1_solve(&params, &output, &info, fp);
+	exitflag = internal_simpleMPC_solver_1_solve(&params, &output, &info, fp);
 	
-	#if SET_PRINTLEVEL_internal_quadprog_1 > 0
+	#if SET_PRINTLEVEL_internal_simpleMPC_solver_1 > 0
 		/* Read contents of printfs printed to file */
 		rewind(fp);
 		while( (i = fgetc(fp)) != EOF ) 
@@ -153,14 +153,10 @@ void mexFunction( solver_int32_default nlhs, mxArray *plhs[], solver_int32_defau
 	#endif
 
 	/* copy output to matlab arrays */
-	plhs[0] = mxCreateStructMatrix(1, 1, 2, outputnames);
+	plhs[0] = mxCreateStructMatrix(1, 1, 1, outputnames);
 		outvar = mxCreateDoubleMatrix(1, 1, mxREAL);
 	copyCArrayToM_double( output.o_1, mxGetPr(outvar), 1);
 	mxSetField(plhs[0], 0, "o_1", outvar);
-
-	outvar = mxCreateDoubleMatrix(1, 1, mxREAL);
-	copyCArrayToM_double( output.o_2, mxGetPr(outvar), 1);
-	mxSetField(plhs[0], 0, "o_2", outvar);
 
 	/* copy exitflag */
 	if( nlhs > 1 )

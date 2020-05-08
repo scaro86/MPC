@@ -1,5 +1,5 @@
 Model {
-  Name			  "internal_quadprog_1"
+  Name			  "internal_simpleMPC_solver_1"
   Version		  8.0
   MdlSubVersion		  0
   GraphicalInterface {
@@ -60,13 +60,13 @@ Model {
       }
     }
   }
-  Created		  "5/8/2020 7:13:15 AM"
+  Created		  "5/8/2020 8:45:54 AM"
   Creator		  "embotech AG"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "embotech AG"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "5/8/2020 7:13:15 AM"
+  LastModifiedDate	  "5/8/2020 8:45:54 AM"
   RTWModifiedTimeStamp	  315310195
   ModelVersionFormat	  "1.%<AutoIncrement:2>"
   ConfigurationManager	  "None"
@@ -747,7 +747,7 @@ Model {
     }
   }
   System {
-    Name		    "internal_quadprog_1"
+    Name		    "internal_simpleMPC_solver_1"
     Location		    [385, 84, 1201, 623]
     Open		    on
     ModelBrowserVisibility  on
@@ -765,21 +765,21 @@ Model {
     SIDHighWatermark	    "1"
     Block {
       BlockType		      S-Function
-      Name		      "internal_quadprog_1"
+      Name		      "internal_simpleMPC_solver_1"
       SID		      "1"
-      Ports		      [1, 2]
+      Ports		      [1, 1]
       Position		      [170, 99, 650, 180]
       ZOrder		      1
-      FunctionName	      "internal_quadprog_1_simulinkBlock"
-	  SFunctionModules	      "internal_quadprog_1 internal_quadprog_1_simulinkBlock"
+      FunctionName	      "internal_simpleMPC_solver_1_simulinkBlockcompact"
+	  SFunctionModules	      "internal_simpleMPC_solver_1 internal_simpleMPC_solver_1_simulinkBlockcompact"
       EnableBusSupport	      off
       Object {
 	$PropName		"MaskObject"
 	$ObjectID		19
 	$ClassName		"Simulink.Mask"
-	Type			"internal_quadprog_1_simulinkBlock"
-	Description		" ---- Simulink block encapsulating your customized solver internal_quadprog_1 ---- \n\n"
-				"internal_quadprog_1 : A fast customized optimization solver.\n"
+	Type			"internal_simpleMPC_solver_1_simulinkBlockcompact"
+	Description		" ---- Simulink block encapsulating your customized solver internal_simpleMPC_solver_1 ---- \n\n"
+				"internal_simpleMPC_solver_1 : A fast customized optimization solver.\n"
 "\n"
 "Copyright (C) 2013-2020 EMBOTECH AG [info@embotech.com]. All rights reserved.\n"
 "\n"
@@ -801,21 +801,19 @@ Model {
 "jurisdiction in case of any dispute.\n"
 "\n"
 
-	Help			"internal_quadprog_1_simulinkBlock provides an easy Simulink interface for simulating your customized solver.  \n"
-	"\nOUTPUTS = internal_quadprog_1(INPUTS) solves an optimization problem where:\n\n"
+	Help			"internal_simpleMPC_solver_1_simulinkBlockcompact provides an easy Simulink interface for simulating your customized solver.  \n"
+	"\nOUTPUTS = internal_simpleMPC_solver_1(INPUTS) solves an optimization problem where:\n\n"
 	"INPUTS:\n"
-	" - p_1 - column vector of length 6\n "
+	" - p_1 - column vector of length 2\n "
 
 	"\nOUTPUTS:\n"
-	" - o_1 - column vector of length 1\n "
-" - o_2 - column vector of length 1\n "
+	" - outputs - column vector of length 1\n "
 
 	"\n For more information, see https://www.embotech.com/FORCES-Pro/How-to-use/Simulink-Interface/Simulink-Block \n "
 
 	Display			"port_label('input', 1, 'p_1') \n  "
-"port_label('output', 1, 'o_1') \n "
-"port_label('output', 2, 'o_2') \n "
-"if( exist('forcesprologo.jpg','file') ), image(imread('forcesprologo.jpg'),'center','on'); elseif( exist(['interface',filesep,'forcesprologo.jpg'],'file') ), image(imread(['interface',filesep,'forcesprologo.jpg']),'center','on'); elseif( exist(['internal_quadprog_1',filesep,'interface',filesep,'forcesprologo.jpg'],'file') ), image(imread(['internal_quadprog_1',filesep,'interface',filesep,'forcesprologo.jpg']),'center','on'); end \n "
+"port_label('output', 1, 'outputs') \n "
+"if( exist('forcesprologo.jpg','file') ), image(imread('forcesprologo.jpg'),'center','on'); elseif( exist(['interface',filesep,'forcesprologo.jpg'],'file') ), image(imread(['interface',filesep,'forcesprologo.jpg']),'center','on'); elseif( exist(['internal_simpleMPC_solver_1',filesep,'interface',filesep,'forcesprologo.jpg'],'file') ), image(imread(['internal_simpleMPC_solver_1',filesep,'interface',filesep,'forcesprologo.jpg']),'center','on'); end \n "
 
       }
     }

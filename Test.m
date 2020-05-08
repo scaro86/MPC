@@ -31,5 +31,6 @@ end
 lf = compute_infinite_cost_LQR(X{N+1});
 objective = objective + lf;
 
-options = getOptions('quadprog');
+options = getOptions('forces_quadprog');
+options.printlevel = 0;
 forces_optimizer = optimizerFORCES(constraints, objective, options, x0, U{1});

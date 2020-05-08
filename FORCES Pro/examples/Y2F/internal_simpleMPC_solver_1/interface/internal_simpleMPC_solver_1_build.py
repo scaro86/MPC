@@ -1,4 +1,4 @@
-#internal_quadprog_1 : A fast customized optimization solver.
+#internal_simpleMPC_solver_1 : A fast customized optimization solver.
 #
 #Copyright (C) 2013-2020 EMBOTECH AG [info@embotech.com]. All rights reserved.
 #
@@ -30,22 +30,22 @@ import sys
 import distutils
 
 # determine source file
-sourcefile = os.path.join(os.getcwd(),"internal_quadprog_1","src","internal_quadprog_1"+".c")
+sourcefile = os.path.join(os.getcwd(),"internal_simpleMPC_solver_1","src","internal_simpleMPC_solver_1"+".c")
 
 # determine lib file
 if sys.platform.startswith('win'):
-	libfile = os.path.join(os.getcwd(),"internal_quadprog_1","lib","internal_quadprog_1"+".lib")
+	libfile = os.path.join(os.getcwd(),"internal_simpleMPC_solver_1","lib","internal_simpleMPC_solver_1"+".lib")
 else:
-	libfile = os.path.join(os.getcwd(),"internal_quadprog_1","lib","internal_quadprog_1"+".so")	
+	libfile = os.path.join(os.getcwd(),"internal_simpleMPC_solver_1","lib","internal_simpleMPC_solver_1"+".so")	
 
 # create lib dir if it does not exist yet
-if not os.path.exists(os.path.join(os.getcwd(),"internal_quadprog_1","lib")):
-	os.makedirs(os.path.join(os.getcwd(),"internal_quadprog_1","lib"))
+if not os.path.exists(os.path.join(os.getcwd(),"internal_simpleMPC_solver_1","lib")):
+	os.makedirs(os.path.join(os.getcwd(),"internal_simpleMPC_solver_1","lib"))
 								
 
 				
 # compile into object file
-objdir = os.path.join(os.getcwd(),"internal_quadprog_1","obj")
+objdir = os.path.join(os.getcwd(),"internal_simpleMPC_solver_1","obj")
 if isinstance(c,distutils.unixccompiler.UnixCCompiler):
 	#objects = c.compile([sourcefile], output_dir=objdir, extra_preargs=['-O3','-fPIC','-fopenmp','-mavx'])
 	objects = c.compile([sourcefile], output_dir=objdir, extra_preargs=['-O3','-fPIC','-mavx'])
@@ -56,7 +56,7 @@ else:
 
 				
 # create libraries
-libdir = os.path.join(os.getcwd(),"internal_quadprog_1","lib")
-exportsymbols = ["%s_solve" % "internal_quadprog_1"]
-c.create_static_lib(objects, "internal_quadprog_1", output_dir=libdir)
-c.link_shared_lib(objects, "internal_quadprog_1", output_dir=libdir, export_symbols=exportsymbols)
+libdir = os.path.join(os.getcwd(),"internal_simpleMPC_solver_1","lib")
+exportsymbols = ["%s_solve" % "internal_simpleMPC_solver_1"]
+c.create_static_lib(objects, "internal_simpleMPC_solver_1", output_dir=libdir)
+c.link_shared_lib(objects, "internal_simpleMPC_solver_1", output_dir=libdir, export_symbols=exportsymbols)
