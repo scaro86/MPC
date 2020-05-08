@@ -4,7 +4,6 @@ close all
 addpath(genpath(cd));
 load('system/parameters_scenarios.mat');
 param = compute_controller_base_parameters;
-
 %% Exercise 5: execute simulation with LQR, x0_1
 % clear persistent variables of function controller_lqr
 clear controller_lqr; 
@@ -40,6 +39,19 @@ sgtitle('Simulation with MPC1 control, T01');
 figure(5)
 sgtitle('Simulation with MPC1 control, T02');
 [T_MPC_12, p_MPC_12] = simulate_truck(T0_2, @controller_mpc_1, scen1);
+%% Exercice 10: Compare infinite horizon costs of MPC and LQR
+costmpc = 0;
+for i = 1:1000
+    if costmpc == 0
+        [~,x,u] = controller_mpc_1(x0_1 + param.T_sp);
+        costmpc = costmpc + x'*param.Q*x + u'*param.R*u;
+    else
+        [~,x,u] = controller_mpc_1(param.A*x + param.B*u +param.T_sp);
+        costmpc = costmpc + x'*param.Q*x + u'*param.R*u;
+    end
+end
+fprintf('Cost of the optimal LQR controller: %.2f\n',costlqr);
+fprintf('The same as the cost of the MPC controller: %.2f\n',costmpc);
 %% Exercise 12: execute simulation with MPC_2
 figure(6)
 sgtitle('Simulation with MPC2 control, T01');
