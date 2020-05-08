@@ -17,7 +17,7 @@ x0 = T - param.T_sp;
 [u, errorcode] = forces_optimizer(x0);
 p = u + param.p_sp;
 % Analyze error flags
-if (errorcode ~= 0)
+if (errorcode ~= 1)
       warning('MPC infeasible');
 end
 end
