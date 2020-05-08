@@ -51,6 +51,6 @@ end
 lf = compute_infinite_cost_LQR(X{N+1});
 objective = objective + lf;
 
-fprintf('JMPC_dummy = %f',value(objective));
-forces_optimizer = optimizerFORCES(..);
+options = getOptions('quadprog');
+forces_optimizer = optimizerFORCES(constraints, objective, options, x0, U{1});
 end
