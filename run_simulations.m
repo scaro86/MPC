@@ -71,4 +71,6 @@ sgtitle('Simulation with MPC4 control, T02');
 %% Exercise 21: observer gain matrix
 %same
 %computing eigenvalues 
-eval = eig(param.A_aug-param.L*param.C_aug);
+eval = eig(param.A_aug+param.L*param.C_aug);
+
+%% Exercise 22: offset-free MPC

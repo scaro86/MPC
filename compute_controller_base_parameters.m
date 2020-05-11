@@ -67,13 +67,13 @@ function param = compute_controller_base_parameters
     R = 2*1e-6*eye(2);
     
     % (20) augmented system 
-    A_aug =[A eye(3);...
+    A_aug =[A Bd;...
         zeros(3) eye(3)];
     B_aug = [B;...
         zeros(3,2)];
     C_aug = [eye(3) zeros(3)];
     %(21)
-    L = -(place(A_aug', C_aug', [0,0,0.3,0.3,0.5,0.5]))';
+    L = -(place(A_aug', C_aug', [0,0,0,0.5,0.5,0.5]))';
     %eig(A_aug + L*C_aug)
     steady= (eye(6)-A_aug+L*C_aug)\(B_aug*p_sp+L*C_aug*[T_sp;d])
     T_sp_aug = steady(1:3);
