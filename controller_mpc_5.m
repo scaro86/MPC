@@ -7,24 +7,43 @@
 %   p: Cooling power, dimension (2,1)
 function p = controller_mpc_5(T)
 % controller variables
-persistent param yalmip_optimizer
+persistent param yalmip_optimizer T_hat d_hat p_k
 
 % initialize controller, if not done already
 if isempty(param)
-    [yalmip_optimizer, param] = mpc_5_optimizer();
+    [param, yalmip_optimizer] = mpc_5_optimizer();
+    T_hat = T;
+    d_hat = param.d;
+    p_k = [0; 0];
 end
-x0 = T - param.T_sp;% à revoir parce qu'on veut une estimation là
-d0 = d;
+% get parameters
+A_aug = param.A_aug;
+B_aug = param.B_aug;
+C_aug = param.C_aug;
+L = param.L;
+A = param.A;
+B = param.B;
+Bd = param.Bd;
+% estimate states
+pre = [T_hat; d_hat];
+estimate = A_aug*pre+B_aug*p_k+L*C_aug*([T; param.d]-pre);
+T_hat = estimate(1:3,1);
+d_hat = estimate(4:6,1);
+% calculate steady state
+T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
+[T_sp, p_sp] = steady(A, B, Bd, T_sp, d_hat);
+% get x0
+x0 = T - T_sp;
 % get optimal u
-[u, errorcode] = yalmip_optimizer(x0);
-p = u + param.p_sp;
+[u, errorcode] = yalmip_optimizer([x0, d_hat]);
+p = u + p_sp;
 % Analyze error flags
 if (errorcode ~= 0)
       warning('MPC infeasible');
 end
 end
 
-function [param, yalmip_optimizer] = mpc_5_optimizer(param)
+function [param, yalmip_opt] = mpc_5_optimizer()
 % initializes the controller on first call and returns parameters and
 % Yalmip optimizer object
 
@@ -36,15 +55,13 @@ B = param.B;
 Bd = param.Bd;
 Q = param.Q;
 R = param.R;
-d = param.d;
-L = param.L;
 [A_x, b_x] = compute_X_LQR;
 
 %% implement your MPC using Yalmip 
 N = 30;
 nx = size(A,1);
 nu = size(B,2);
-nd = size(d,1);
+nd = size(Bd,2);
 % define symbolic decision values
 U = sdpvar(repmat(nu,1,N),repmat(1,1,N),'full');
 X = sdpvar(repmat(nx,1,N+1),repmat(1,1,N+1),'full');
@@ -67,5 +84,5 @@ lf = X{31}'*P*X{31};
 objective = objective + lf;
 
 ops = sdpsettings('verbose',0,'solver','quadprog');
-yalmip_opt = optimizer(constraints,objective,ops,x0,U{1});
+yalmip_opt = optimizer(constraints,objective,ops,[x0, d0],U{1});
 end
