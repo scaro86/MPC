@@ -79,6 +79,7 @@ function param = compute_controller_base_parameters
     % put everything together
     param.A = A;
     param.B = B;
+    param.C = eye(3);
     param.Bd = Bd;
     param.A_aug = A_aug;
     param.B_aug = B_aug;
