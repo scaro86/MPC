@@ -74,3 +74,6 @@ sgtitle('Simulation with MPC4 control, T02');
 eval = eig(param.A_aug+param.L*param.C_aug);
 
 %% Exercise 22: offset-free MPC
+figure(12)
+sgtitle('Simulation with MPC5 control, T01');
+[T_MPC_51, p_MPC_51] = simulate_truck(T0_1, @controller_mpc_5, scen2);

@@ -75,23 +75,20 @@ function param = compute_controller_base_parameters
     %(21)
     L = -(place(A_aug', C_aug', [0,0,0,0.5,0.5,0.5]))';
     %eig(A_aug + L*C_aug)
-    steady= (eye(6)-A_aug+L*C_aug)\(B_aug*p_sp+L*C_aug*[T_sp;d])
-    T_sp_aug = steady(1:3);
-    d_sp = steady(4:end);
     
     % put everything together
     param.A = A;
     param.B = B;
+    param.Bd = Bd;
     param.A_aug = A_aug;
     param.B_aug = B_aug;
     param.C_aug = C_aug;
     param.L = L;
     param.Q = Q;
     param.R = R;
+    param.d = d;
     param.T_sp = T_sp;
     param.p_sp = p_sp;
-    param.T_sp_aug = T_sp_aug;
-    param.d_sp = d_sp;
     param.Ucons = Ucons;
     param.Xcons = Xcons;
     param.Tcons = Tcons;
