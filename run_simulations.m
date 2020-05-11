@@ -66,4 +66,9 @@ figure(11)
 sgtitle('Simulation with MPC4 control, T02');
 [T_MPC_42, p_MPC_42] = simulate_truck(T0_2, @controller_mpc_4, scen1);
 
-
+%% Exercise 20: augmented state dynamics
+%see compute_controller_base_parameters
+%% Exercise 21: observer gain matrix
+%same
+%computing eigenvalues 
+eval = eig(param.A_aug-param.L*param.C_aug);
