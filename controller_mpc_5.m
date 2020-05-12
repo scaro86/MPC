@@ -7,17 +7,15 @@
 %   p: Cooling power, dimension (2,1)
 function p = controller_mpc_5(T)
 % controller variables
-persistent param yalmip_optimizer T_hat d_hat p_k
+persistent param yalmip_optimizer T_hat d_hat u
 
 % initialize controller, if not done already
 if isempty(param)
     [yalmip_optimizer, param] = mpc_5_optimizer();
-    x(:,1) = x0;
-    xh(:,1) = x0;
-    dh(:,1) = [0;0;0];
-    T_hat = T;
-    d_hat = param.d;
-    p_k = [0; 0];
+    x(:,1) = T;
+    xh(:,1) = T;
+    dh(:,1) = param.d;
+    u(:,1) = zeros(2,1);
 end
 %get the estimation 
 Nsim = 10;
@@ -33,11 +31,13 @@ L = param.L;
 %Simulate autonomous system
 aux = [xh(:,1); dh(:,1)];
 for i = 1:Nsim-1
-    x(:,i+1) = A*x(:,i) + d;
+    x(:,i+1) = A*x(:,i) + B*u(:,i)+ Bd*d;
+    aux = A_aug*aux + B_aug*u(:,i)+ L*(aux - x(:,i));
     xh(:,i+1) = aux(1:2); 
-    aux = A_aug*aux + L*(C_aug*aux - x(:,i));
     dh(:,i+1) = aux(3:4);
 end
+T_hat = xh(:,end);
+d_hat = dh(:,end);
 % calculate steady state
 T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
 [T_sp, p_sp] = steady(A, B, Bd, T_sp, d_hat);
@@ -69,6 +69,7 @@ R = param.R;
 
 
 %% implement your MPC using Yalmip 
+N=30;
 nx = size(A,1);
 nu = size(B,2);
 nd = size(Bd,2);
