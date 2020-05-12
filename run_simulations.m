@@ -84,7 +84,7 @@ figure(12)
 x0_1 = [3; 1; 0];
 T0_1 = param.T_sp + x0_1;
 sgtitle('Simulation with MPC5 control, T01');
-[T_MPC_51, p_MPC_51] = simulate_truck(T0_1, @controller_mpc_5, scen1);
+[T_MPC_51, p_MPC_51] = simulate_truck(T0_1, @controller_mpc_5, scen2);
 %% Exercise 23: execute simulation with MPC_forces vs MPC_1
 figure(20)
 [T_MPC_12, p_MPC_12, t_sim] = simulate_truck(T0_2, @controller_mpc_1, scen1);
