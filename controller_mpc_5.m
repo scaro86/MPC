@@ -40,8 +40,20 @@ end
 T_hat = T_hat(:,end);
 d_hat = d_hat(:,end);
 % calculate steady state
+
 T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
-[T_sp, p_sp] = steady(A, B, Bd, T_sp, d_hat);
+[T_sp, p_sp] = steady(A, B, Bd, T_sp, d_hat); 
+
+% H = eye(3);
+% r = [0,0,0]';
+% left = [A-eye(3) B;...
+%     H*C zeros(3,2)];
+% right = [-Bd*d_hat;...
+%         r];
+% estim = left\right;
+% T_sp = param.T_sp;
+% T_sp(3) = estim(3);
+% p_sp = estim(4:end);
 % get x0
 x0 = T - T_sp;
 % get optimal u
