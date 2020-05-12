@@ -23,23 +23,39 @@ A_aug = param.A_aug;
 C_aug = param.C_aug;
 L = param.L;
 %Estimate d_hat starting in the second iteration
-est = [T_hat; d_hat];
+est = [T_hat; d_hat(:,end)];
 x0_est = T_hat-T_sp;
-u_est = yalmip_optimizer([x0_est, d_hat]);
+u_est = yalmip_optimizer([x0_est, d_hat(:,end)]);
 p_est = u_est+p_sp;
 if (sum(isnan(p_est))~=0)
     p_est = [-2500; -2000];
 end
 est = A_aug*est+B_aug*p_est+L*C_aug*(est-[T; zeros(3,1)]);
 T_hat = est(1:3);
-d_hat = est(4:6);
+d_hat = [d_hat, est(4:6)];
+d1 = d_hat(1,:); 
+d2 = d_hat(2,:); 
+d3 = d_hat(3,:);
+subplot(3,1,1)
+plot(d1);
+subplot(3,1,2)
+plot(d2);
+subplot(3,1,3)
+plot(d3);
+err = abs(d_hat(:,end)-d_hat(:,end-1));
+if (err <= 1)
+    err = abs(d_hat-d_hat(:,end));
+    err1 = max(err(1,:));
+    err2 = max(err(2,:));
+    err3 = max(err(3,:));
+end
 % calculate steady state
 T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
-[T_sp, p_sp] = steady(param.A, param.B, param.Bd, T_sp, d_hat); %calculate T_sp(3) and p_sp
+[T_sp, p_sp] = steady(param.A, param.B, param.Bd, T_sp, d_hat(:,end)); %calculate T_sp(3) and p_sp
 % get x0
 x0 = T - T_sp;
 % get optimal u
-[u, errorcode] = yalmip_optimizer([x0, d_hat]);
+[u, errorcode] = yalmip_optimizer([x0, d_hat(:,end)]);
 p = u + p_sp;
 % Analyze error flags
 if (errorcode ~= 0)
