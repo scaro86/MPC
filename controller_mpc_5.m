@@ -20,6 +20,7 @@ end
 Nsim = 10;
 A = param.A;
 B = param.B;
+Bd = param.Bd;
 C = param.C;
 A_aug = param.A_aug;
 B_aug = param.B_aug;
@@ -37,7 +38,7 @@ for i = 1:Nsim-1
     dh(:,i+1) = aux(3:4);
 end
 
-%Computation os steady states 
+%Computation of steady states 
 H=eye(3);
 r=zeros(3,1);
 left = [A-eye(3) B;...
@@ -48,18 +49,17 @@ estim = left\right;
 xs = estim[1:3,:];
 us = estim[4:end,:];
 
-x0 = xh(:,end)-xs;% à revoir parce qu'on veut une estimation là
-d0 = dh(:,end);
+x0 = T-T_sp;% à revoir parce qu'on veut une estimation là
 % get optimal u
-[u, errorcode] = yalmip_optimizer(x0);
-p = u + us;
+[u, errorcode] = yalmip_optimizer([x0,d_hat]);
+p = u + p_sp;
 % Analyze error flags
 if (errorcode ~= 0)
       warning('MPC infeasible');
 end
 end
 
-function [param, yalmip_optimizer] = mpc_5_optimizer(param)
+function [param, yalmip_optimizer] = mpc_5_optimizer()
 % initializes the controller on first call and returns parameters and
 % Yalmip optimizer object
 
@@ -72,14 +72,13 @@ C = param.C;
 Bd = param.Bd;
 Q = param.Q;
 R = param.R;
-d = param.d;
 [A_x, b_x] = compute_X_LQR;
 
 
 %% implement your MPC using Yalmip 
 nx = size(A,1);
 nu = size(B,2);
-nd = size(d,1);
+nd = size(Bd,1);
 % define symbolic decision values
 U = sdpvar(repmat(nu,1,N),repmat(1,1,N),'full');
 X = sdpvar(repmat(nx,1,N+1),repmat(1,1,N+1),'full');
@@ -102,5 +101,5 @@ lf = X{31}'*P*X{31};
 objective = objective + lf;
 
 ops = sdpsettings('verbose',0,'solver','quadprog');
-yalmip_opt = optimizer(constraints,objective,ops,x0,U{1});
+yalmip_opt = optimizer(constraints,objective,ops,[x0,d0],U{1});
 end
