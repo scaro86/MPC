@@ -7,36 +7,35 @@
 %   p: Cooling power, dimension (2,1)
 function p = controller_mpc_5(T)
 % controller variables
-persistent param yalmip_optimizer d_hat
-
+persistent param yalmip_optimizer d_hat T_hat T_sp p_sp
 % initialize controller, if not done already
 if isempty(param)
+    first = 1;
     [param, yalmip_optimizer] = mpc_5_optimizer();
     d_hat = param.d;
+    T_hat = T;
+    T_sp = param.T_sp;
+    p_sp = param.p_sp;
 end
 %get parameters 
-Nsim = 10;
-A = param.A;
-Bd = param.Bd;
-B = param.B;
-C = param.C;
 B_aug = param.B_aug;
 A_aug = param.A_aug;
 C_aug = param.C_aug;
-d = param.d;
 L = param.L;
-%Simulate autonomous system to estimate d_hat
-T_hat = T;
-x = T;
-aux = [T_hat; d_hat];
-for i = 1:Nsim-1
-    x(:,i+1) = A*x(:,i)+ Bd*d;
-    aux = A_aug*aux+ L*C_aug*(aux - [x(:,i);d]);
+%Estimate d_hat starting in the second iteration
+est = [T_hat; d_hat];
+x0_est = T_hat-T_sp;
+u_est = yalmip_optimizer([x0_est, d_hat]);
+p_est = u_est+p_sp;
+if (sum(isnan(p_est))~=0)
+    p_est = [-2500; -2000];
 end
-d_hat = aux(4:6);
+est = A_aug*est+B_aug*p_est+L*C_aug*(est-[T; zeros(3,1)]);
+T_hat = est(1:3);
+d_hat = est(4:6);
 % calculate steady state
 T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
-[T_sp, p_sp] = steady(A, B, Bd, T_sp, d_hat); %calculate T_sp(3) and p_sp
+[T_sp, p_sp] = steady(param.A, param.B, param.Bd, T_sp, d_hat); %calculate T_sp(3) and p_sp
 % get x0
 x0 = T - T_sp;
 % get optimal u
