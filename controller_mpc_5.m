@@ -11,11 +11,11 @@ persistent param yalmip_optimizer T_hat d_hat u
 
 % initialize controller, if not done already
 if isempty(param)
-    [yalmip_optimizer, param] = mpc_5_optimizer();
-    x(:,1) = T;
-    xh(:,1) = T;
-    dh(:,1) = param.d;
-    u(:,1) = zeros(2,1);
+    [param, yalmip_optimizer] = mpc_5_optimizer();
+    x = T;
+    T_hat = T;
+    d_hat = param.d;
+    u = zeros(2,1);
 end
 %get the estimation 
 Nsim = 10;
@@ -29,15 +29,16 @@ C_aug = param.C_aug;
 d = param.d;
 L = param.L;
 %Simulate autonomous system
-aux = [xh(:,1); dh(:,1)];
+aux = [T_hat; d_hat];
+x = T;
 for i = 1:Nsim-1
-    x(:,i+1) = A*x(:,i) + B*u(:,i)+ Bd*d;
-    aux = A_aug*aux + B_aug*u(:,i)+ L*(aux - x(:,i));
-    xh(:,i+1) = aux(1:2); 
-    dh(:,i+1) = aux(3:4);
+    x(:,i+1) = A*x(:,i) + B*u+ Bd*d;
+    aux = A_aug*aux + B_aug*u+ L*C_aug*(aux - [x(:,i);d]);
+    T_hat(:,i+1) = aux(1:3); 
+    d_hat(:,i+1) = aux(4:6);
 end
-T_hat = xh(:,end);
-d_hat = dh(:,end);
+T_hat = T_hat(:,end);
+d_hat = d_hat(:,end);
 % calculate steady state
 T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
 [T_sp, p_sp] = steady(A, B, Bd, T_sp, d_hat);
