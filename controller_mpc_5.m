@@ -7,7 +7,7 @@
 %   p: Cooling power, dimension (2,1)
 function p = controller_mpc_5(T)
 % controller variables
-persistent param yalmip_optimizer xh dh
+persistent param yalmip_optimizer T_hat d_hat p_k
 
 % initialize controller, if not done already
 if isempty(param)
@@ -15,43 +15,36 @@ if isempty(param)
     x(:,1) = x0;
     xh(:,1) = x0;
     dh(:,1) = [0;0;0];
+    T_hat = T;
+    d_hat = param.d;
+    p_k = [0; 0];
 end
 %get the estimation 
 Nsim = 10;
 A = param.A;
-B = param.B;
 Bd = param.Bd;
+B = param.B;
 C = param.C;
-A_aug = param.A_aug;
 B_aug = param.B_aug;
+A_aug = param.A_aug;
 C_aug = param.C_aug;
 d = param.d;
 L = param.L;
-
-
 %Simulate autonomous system
 aux = [xh(:,1); dh(:,1)];
 for i = 1:Nsim-1
     x(:,i+1) = A*x(:,i) + d;
-    aux = A_aug*aux + L*(C_aug*aux - x(:,i));
     xh(:,i+1) = aux(1:2); 
+    aux = A_aug*aux + L*(C_aug*aux - x(:,i));
     dh(:,i+1) = aux(3:4);
 end
-
-%Computation of steady states 
-H=eye(3);
-r=zeros(3,1);
-left = [A-eye(3) B;...
-    H*C zeros(3,2];
-right = [-Bb*dh;...
-        r];
-estim = left\right;
-xs = estim[1:3,:];
-us = estim[4:end,:];
-
-x0 = T-T_sp;% à revoir parce qu'on veut une estimation là
+% calculate steady state
+T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
+[T_sp, p_sp] = steady(A, B, Bd, T_sp, d_hat);
+% get x0
+x0 = T - T_sp;
 % get optimal u
-[u, errorcode] = yalmip_optimizer([x0,d_hat]);
+[u, errorcode] = yalmip_optimizer([x0, d_hat]);
 p = u + p_sp;
 % Analyze error flags
 if (errorcode ~= 0)
@@ -59,7 +52,7 @@ if (errorcode ~= 0)
 end
 end
 
-function [param, yalmip_optimizer] = mpc_5_optimizer()
+function [param, yalmip_opt] = mpc_5_optimizer()
 % initializes the controller on first call and returns parameters and
 % Yalmip optimizer object
 
@@ -78,7 +71,7 @@ R = param.R;
 %% implement your MPC using Yalmip 
 nx = size(A,1);
 nu = size(B,2);
-nd = size(Bd,1);
+nd = size(Bd,2);
 % define symbolic decision values
 U = sdpvar(repmat(nu,1,N),repmat(1,1,N),'full');
 X = sdpvar(repmat(nx,1,N+1),repmat(1,1,N+1),'full');
@@ -101,5 +94,5 @@ lf = X{31}'*P*X{31};
 objective = objective + lf;
 
 ops = sdpsettings('verbose',0,'solver','quadprog');
-yalmip_opt = optimizer(constraints,objective,ops,[x0,d0],U{1});
+yalmip_opt = optimizer(constraints,objective,ops,[x0, d0],U{1});
 end
