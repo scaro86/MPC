@@ -31,8 +31,7 @@ while (sum(isnan(p_est))~=0) % if MPC not feasible, use LQR
     u_est = K*(T_hat - T_sp);
     p_est = u_est + p_sp;
 end
-L = getL;  
-est = A_aug*est+B_aug*p_est+L*C_aug*(est-[T; zeros(3,1)]);
+est = A_aug*est+B_aug*p_est+L*C_aug*(est-[T; param.d]);
 T_hat = est(1:3);
 d_hat = [d_hat, est(4:6)];
 % % plot disturbance estimation
@@ -57,7 +56,6 @@ x0 = T - T_sp;
 % get optimal u
 [u, errorcode] = yalmip_optimizer([x0, d_hat(:,end)]);
 p = u + p_sp;
-p_est =p;
 % Analyze error flags
 if (errorcode ~= 0)
       warning('MPC infeasible');
@@ -77,7 +75,7 @@ Q = param.Q;
 R = param.R;
 [A_x, b_x] = compute_X_LQR;
 %% implement your MPC using Yalmip 
-N=30;
+N=50;
 nx = size(A,1);
 nu = size(B,2);
 % define symbolic decision values
@@ -87,7 +85,7 @@ x0 = sdpvar(3,1);
 d0 = sdpvar(3,1);
 %define constraints and objective function
 objective = 0;
-constraints = [X{1}==x0, A_x*X{31}<=b_x];
+constraints = [X{1}==x0, A_x*X{N+1}<=b_x];
 for k = 1:N
   constraints = [constraints, X{k+1}==A*X{k}+B*U{k}+Bd*d0];
   constraints = [constraints, Xcons(:,1)<=X{k+1}<=Xcons(:,2)];
@@ -96,7 +94,7 @@ for k = 1:N
 end
 % determine terminal cost P (solution to discrete-time Riccati equation)
 P = dare(A,B,Q,R);
-lf = X{31}'*P*X{31};
+lf = X{N+1}'*P*X{N+1};
 objective = objective + lf;
 
 ops = sdpsettings('verbose',0,'solver','quadprog');
