@@ -21,7 +21,9 @@ end
 B_aug = param.B_aug;
 A_aug = param.A_aug;
 C_aug = param.C_aug;
-L = param.L;
+%L = param.L;
+errd = 5;
+while abs(errd >=0.5)
 %Estimate d_hat starting in the second iteration
 est = [T_hat; d_hat(:,end)];
 x0_est = T_hat-T_sp;
@@ -30,24 +32,28 @@ p_est = u_est+p_sp;
 if (sum(isnan(p_est))~=0)
     p_est = [-2500; -2000];
 end
+L = getL;  
 est = A_aug*est+B_aug*p_est+L*C_aug*(est-[T; zeros(3,1)]);
 T_hat = est(1:3);
 d_hat = [d_hat, est(4:6)];
-d1 = d_hat(1,:); 
-d2 = d_hat(2,:); 
-d3 = d_hat(3,:);
-subplot(3,1,1)
-plot(d1);
-subplot(3,1,2)
-plot(d2);
-subplot(3,1,3)
-plot(d3);
-err = abs(d_hat(:,end)-d_hat(:,end-1));
-if (err <= 1)
-    err = abs(d_hat-d_hat(:,end));
-    err1 = max(err(1,:));
-    err2 = max(err(2,:));
-    err3 = max(err(3,:));
+% d1 = d_hat(1,:); 
+% d2 = d_hat(2,:); 
+% d3 = d_hat(3,:);
+% subplot(3,1,1)
+% plot(d1);
+% subplot(3,1,2)
+% plot(d2);
+% subplot(3,1,3)
+% plot(d3);
+% err = abs(d_hat(:,end)-d_hat(:,end-1));
+% if (err <= 1)
+%     err = abs(d_hat-d_hat(:,end));
+%     err1 = max(err(1,:));
+%     err2 = max(err(2,:));
+%     err3 = max(err(3,:));
+% end
+errd = abs(d_hat(:,end)-param.d);
+
 end
 % calculate steady state
 T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
