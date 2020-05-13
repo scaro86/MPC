@@ -7,44 +7,55 @@
 %   p: Cooling power, dimension (2,1)
 function p = controller_mpc_5(T)
 % controller variables
-persistent param yalmip_optimizer T_hat d_hat p_est
-
+persistent param yalmip_optimizer d_hat T_hat T_sp p_sp
 % initialize controller, if not done already
 if isempty(param)
+    first = 1;
     [param, yalmip_optimizer] = mpc_5_optimizer();
     d_hat = param.d;
-    p_est = ones(2,1);
+    T_hat = T;
+    T_sp = param.T_sp;
+    p_sp = param.p_sp;
 end
-%get the estimation 
-Nsim = 10;
-A = param.A;
-Bd = param.Bd;
-B = param.B;
-C = param.C;
+%get parameters 
 B_aug = param.B_aug;
 A_aug = param.A_aug;
 C_aug = param.C_aug;
-d = param.d;
 L = param.L;
-%Simulate autonomous system
-T_hat = T;
-aux = [T_hat; d_hat];
-x = T;
-for i = 1:Nsim-1
-    x(:,i+1) = A*x(:,i) + B*p_est+ Bd*d;
-    aux = A_aug*aux + B_aug*p_est+ L*C_aug*(aux - [x(:,i);d]);
+%Estimate d_hat starting in the second iteration
+est = [T_hat; d_hat(:,end)];
+x0_est = T_hat-T_sp;
+u_est = yalmip_optimizer([x0_est, d_hat(:,end)]);
+p_est = u_est+p_sp;
+if (sum(isnan(p_est))~=0)
+    p_est = [-2500; -2000];
 end
-T_hat = aux(1:3);
-d_hat = aux(4:6);
+est = A_aug*est+B_aug*p_est+L*C_aug*(est-[T; zeros(3,1)]);
+T_hat = est(1:3);
+d_hat = [d_hat, est(4:6)];
+d1 = d_hat(1,:); 
+d2 = d_hat(2,:); 
+d3 = d_hat(3,:);
+subplot(3,1,1)
+plot(d1);
+subplot(3,1,2)
+plot(d2);
+subplot(3,1,3)
+plot(d3);
+err = abs(d_hat(:,end)-d_hat(:,end-1));
+if (err <= 1)
+    err = abs(d_hat-d_hat(:,end));
+    err1 = max(err(1,:));
+    err2 = max(err(2,:));
+    err3 = max(err(3,:));
+end
 % calculate steady state
-
 T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
-[T_sp, p_sp] = steady(A, B, Bd, T_sp, d_hat); 
-
+[T_sp, p_sp] = steady(param.A, param.B, param.Bd, T_sp, d_hat(:,end)); %calculate T_sp(3) and p_sp
 % get x0
 x0 = T - T_sp;
 % get optimal u
-[u, errorcode] = yalmip_optimizer([x0, d_hat]);
+[u, errorcode] = yalmip_optimizer([x0, d_hat(:,end)]);
 p = u + p_sp;
 p_est =p;
 % Analyze error flags
@@ -56,7 +67,6 @@ end
 function [param, yalmip_opt] = mpc_5_optimizer()
 % initializes the controller on first call and returns parameters and
 % Yalmip optimizer object
-
 param = compute_controller_base_parameters; % get basic controller parameters
 Ucons = param.Ucons;
 Xcons = param.Xcons;
@@ -67,8 +77,6 @@ Bd = param.Bd;
 Q = param.Q;
 R = param.R;
 [A_x, b_x] = compute_X_LQR;
-
-
 %% implement your MPC using Yalmip 
 N=30;
 nx = size(A,1);
