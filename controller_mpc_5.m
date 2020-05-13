@@ -7,13 +7,13 @@
 %   p: Cooling power, dimension (2,1)
 function p = controller_mpc_5(T)
 % controller variables
-persistent param yalmip_optimizer T_hat d_hat u
+persistent param yalmip_optimizer T_hat d_hat p_est
 
 % initialize controller, if not done already
 if isempty(param)
     [param, yalmip_optimizer] = mpc_5_optimizer();
     d_hat = param.d;
-    u = ones(2,1);
+    p_est = ones(2,1);
 end
 %get the estimation 
 Nsim = 10;
@@ -31,8 +31,8 @@ T_hat = T;
 aux = [T_hat; d_hat];
 x = T;
 for i = 1:Nsim-1
-    x(:,i+1) = A*x(:,i) + B*u+ Bd*d;
-    aux = A_aug*aux + B_aug*u+ L*C_aug*(aux - [x(:,i);d]);
+    x(:,i+1) = A*x(:,i) + B*p_est+ Bd*d;
+    aux = A_aug*aux + B_aug*p_est+ L*C_aug*(aux - [x(:,i);d]);
 end
 T_hat = aux(1:3);
 d_hat = aux(4:6);
@@ -46,6 +46,7 @@ x0 = T - T_sp;
 % get optimal u
 [u, errorcode] = yalmip_optimizer([x0, d_hat]);
 p = u + p_sp;
+p_est =p;
 % Analyze error flags
 if (errorcode ~= 0)
       warning('MPC infeasible');
