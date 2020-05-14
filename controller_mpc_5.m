@@ -10,7 +10,7 @@ function p = controller_mpc_5(T)
 persistent param yalmip_optimizer d_hat T_hat T_sp p_sp
 % initialize controller, if not done already
 if isempty(param)
-    [param, yalmip_optimizer] = mpc_5_optimizer();
+    [param, yalmip_optimizer] = mpc_5_optimizer(T_sp,p_sp);
     d_hat = param.d;
     T_hat = T;
     T_sp = param.T_sp;
@@ -50,7 +50,9 @@ if (err <= 1)
 end
 % calculate steady state
 T_sp = param.T_sp; % for T1 and T2 we track the same steady state as before
-[T_sp, p_sp] = steady(param.A, param.B, param.Bd, T_sp, d_hat(:,end)); %calculate T_sp(3) and p_sp
+% [T_sp, p_sp] = steady(param.A, param.B, param.Bd, T_sp, d_hat(:,end)); %calculate T_sp(3) and p_sp
+[T_sp, p_sp] = steady_hat(param.A, param.B, param.Bd,param.C, T_sp, d_hat(:,end))
+%get constraints
 % get x0
 x0 = T - T_sp;
 % get optimal u
@@ -62,17 +64,21 @@ if (errorcode ~= 0)
 end
 end
 
-function [param, yalmip_opt] = mpc_5_optimizer()
+function [param, yalmip_opt] = mpc_5_optimizer(T_sp,p_sp)
 % initializes the controller on first call and returns parameters and
 % Yalmip optimizer object
 param = compute_controller_base_parameters; % get basic controller parameters
-Ucons = param.Ucons;
-Xcons = param.Xcons;
 A = param.A;
 B = param.B;
 Bd = param.Bd;
 Q = param.Q;
 R = param.R;
+if isempty(p_sp)||isempty(T_sp)
+    T_sp = param.T_sp;
+    p_sp = param.p_sp;
+end
+Ucons = param.Pcons-[p_sp(1)*ones(1,2); p_sp(2)*ones(1,2)];
+Xcons = param.Tcons-[T_sp(1)*ones(1,2); T_sp(2)*ones(1,2); T_sp(3)*ones(1,2)];
 [A_x, b_x] = compute_X_LQR;
 %% implement your MPC using Yalmip 
 N=50;

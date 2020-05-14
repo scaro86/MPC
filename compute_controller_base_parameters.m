@@ -38,11 +38,13 @@ function param = compute_controller_base_parameters
     R = 2*1e-6*eye(2);
     
     % (20) augmented system 
+%     C = [1,0,0;0,1,0];
+    C = eye(3);
     A_aug =[A Bd;...
         zeros(3) eye(3)];
     B_aug = [B;...
         zeros(3,2)];
-    C_aug = [eye(3) zeros(3)];
+    C_aug = [C, zeros(size(C))];
     %(21)
 %     L = -(place(A_aug', C_aug', [0,0.35,0.1,0.2,0.4,0.5]))';
 %     L = -(place(A_aug', C_aug', [0,0.3,0.1,0,0.4,0.5]))';
@@ -52,7 +54,7 @@ function param = compute_controller_base_parameters
     % put everything together
     param.A = A;
     param.B = B;
-    param.C = eye(3);
+    param.C = C;
     param.Bd = Bd;
     param.A_aug = A_aug;
     param.B_aug = B_aug;
