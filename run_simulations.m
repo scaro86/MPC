@@ -4,7 +4,6 @@ close all
 addpath(genpath(cd));
 load('system/parameters_scenarios.mat');
 param = compute_controller_base_parameters;
-
 %% Exercise 5: execute simulation with LQR, x0_1
 % clear persistent variables of function controller_lqr
 clear controller_lqr; 
@@ -40,10 +39,20 @@ sgtitle('Simulation with MPC1 control, T01');
 figure(5)
 sgtitle('Simulation with MPC1 control, T02');
 [T_MPC_12, p_MPC_12] = simulate_truck(T0_2, @controller_mpc_1, scen1);
+%% Exercice 10: Compare infinite horizon costs of MPC and LQR
+costmpc = compute_cost_mpc1(x0_1,1000);
+
+fprintf('Cost of the optimal LQR controller: %.2f\n',costlqr);
+fprintf('The same as the cost of the MPC controller: %.2f\n',costmpc);
 %% Exercise 12: execute simulation with MPC_2
 figure(6)
 sgtitle('Simulation with MPC2 control, T01');
 [T_MPC_21, p_MPC_21] = simulate_truck(T0_1, @controller_mpc_2, scen1);
+%% Exercice 13 Differences between MPC1 and MPC2 and results for T0_2
+sgtitle('Simulation with MPC2 control, T01');
+[T_MPC_22, p_MPC_22] = simulate_truck(T0_2, @controller_mpc_2, scen1);
+costmpc_11 = compute_cost_mpc1(T0_1-param.T_sp,30);
+costmpc_21 = compute_cost_mpc2(T0_1-param.T_sp,30);
 %% Exercise 15: execute simulation with MPC_3
 figure(7)
 sgtitle('Simulation with MPC3 control, T01');
@@ -64,5 +73,33 @@ sgtitle('Simulation with MPC4 control, T03');
 figure(11)
 sgtitle('Simulation with MPC4 control, T02');
 [T_MPC_42, p_MPC_42] = simulate_truck(T0_2, @controller_mpc_4, scen1);
+
+function costmpc = compute_cost_mpc1(x0,N)
+param = compute_controller_base_parameters; 
+costmpc = 0;
+for i = 1:N
+    if costmpc == 0
+        [~,x,u] = controller_mpc_1(x0 + param.T_sp);
+        costmpc = costmpc + x'*param.Q*x + u'*param.R*u;
+    else
+        [~,x,u] = controller_mpc_1(param.A*x + param.B*u +param.T_sp);
+        costmpc = costmpc + x'*param.Q*x + u'*param.R*u;
+    end
+end
+end
+
+function costmpc = compute_cost_mpc2(x0,N)
+param = compute_controller_base_parameters; 
+costmpc = 0;
+for i = 1:N
+    if costmpc == 0
+        [~,x,u] = controller_mpc_2(x0 + param.T_sp);
+        costmpc = costmpc + x'*param.Q*x + u'*param.R*u;
+    else
+        [~,x,u] = controller_mpc_2(param.A*x + param.B*u +param.T_sp);
+        costmpc = costmpc + x'*param.Q*x + u'*param.R*u;
+    end
+end
+end
 
 

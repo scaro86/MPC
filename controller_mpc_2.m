@@ -5,7 +5,7 @@
 %   T: Measured system temperatures, dimension (3,1)
 % OUTPUT:
 %   p: Cooling power, dimension (2,1)
-function p = controller_mpc_2(T)
+function [p,x0,u_mpc] = controller_mpc_2(T)
 persistent param yalmip_optimizer
 % get parameters and do optimization based on sdpvar x0
 if isempty(param)
