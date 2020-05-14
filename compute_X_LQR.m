@@ -16,7 +16,7 @@ function [A_x, b_x] = compute_X_LQR
     X_LQR = systemLQR.invariantSet();
     A_x =X_LQR.A ;
     b_x =X_LQR.b ;
-%     figure(3)
-%     X_LQR.plot(), alpha(0.25)
+%     figure
+%     X_LQR.plot(), alpha(0.25), title('Invariant Set X_{LQR}'), xlabel('T_1'), ylabel('T_2'), zlabel('T_3')
 end
 

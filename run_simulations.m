@@ -67,10 +67,20 @@ sgtitle('Simulation with MPC4 control, T03');
 figure(11)
 sgtitle('Simulation with MPC4 control, T02');
 [T_MPC_42, p_MPC_42] = simulate_truck(T0_2, @controller_mpc_4, scen1);
+%% Exercise 20: augmented state dynamics
+% see compute_controller_base_parameters
+%% Exercise 21: observer gain matrix 
+eval = eig(param.A_aug+param.L*param.C_aug);
+%% Exercise 22: offset-free MPC
+figure(12)
+sgtitle('Simulation with MPC5 control, T01');
+[T_MPC_51, p_MPC_51] = simulate_truck(T0_1, @controller_mpc_5, scen2);
+figure(13)
+sgtitle('Simulation with MPC3 control, T01');
+[T_MPC_31b, p_MPC_31b] = simulate_truck(T0_1, @controller_mpc_3, scen2);
 %% Exercise 23: execute simulation with MPC_forces vs MPC_1
 figure(20)
 [T_MPC_12, p_MPC_12, t_sim] = simulate_truck(T0_2, @controller_mpc_1, scen1);
 figure(21)
 [T_MPC_f2, p_MPC_f2] = simulate_truck(T0_2, @controller_mpc_1_forces, scen1); % to initialise
 [T_MPC_f2, p_MPC_f2, t_sim_forces] = simulate_truck(T0_2, @controller_mpc_1_forces, scen1);
-
