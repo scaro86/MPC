@@ -72,6 +72,13 @@ sgtitle('Simulation with MPC4 control, T02');
 %% Exercise 21: observer gain matrix 
 eval = eig(param.A_aug+param.L*param.C_aug);
 %% Exercise 22: offset-free MPC
+clear all
+close all
+addpath(genpath(cd));
+load('system/parameters_scenarios.mat');
+param = compute_controller_base_parameters;
+x0_1 = [3; 1; 0];
+T0_1 = param.T_sp + x0_1;
 figure(12)
 sgtitle('Simulation with MPC5 control, T01');
 [T_MPC_51, p_MPC_51] = simulate_truck(T0_1, @controller_mpc_5, scen2);
