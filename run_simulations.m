@@ -33,7 +33,6 @@ sgtitle('Simulation with LQR control, T02');
 % Big constraint violation from k=2 to k=53
 %% Exercise 8 : Computation of X_LQR set
 [A_x, b_x] = compute_X_LQR;
-
 %% Exercise 9: execute simulation with MPC_1
 figure(4)
 sgtitle('Simulation with MPC1 control, T01');
@@ -70,21 +69,15 @@ sgtitle('Simulation with MPC4 control, T02');
 [T_MPC_42, p_MPC_42] = simulate_truck(T0_2, @controller_mpc_4, scen1);
 %% Exercise 20: augmented state dynamics
 % see compute_controller_base_parameters
-%% Exercise 21: observer gain matrix
-%same
-%computing eigenvalues 
+%% Exercise 21: observer gain matrix 
 eval = eig(param.A_aug+param.L*param.C_aug);
 %% Exercise 22: offset-free MPC
-clear all 
-close all
-clc
-load('system/parameters_scenarios.mat');
-param = compute_controller_base_parameters;
 figure(12)
-x0_1 = [3; 1; 0];
-T0_1 = param.T_sp + x0_1;
 sgtitle('Simulation with MPC5 control, T01');
 [T_MPC_51, p_MPC_51] = simulate_truck(T0_1, @controller_mpc_5, scen2);
+figure(13)
+sgtitle('Simulation with MPC3 control, T01');
+[T_MPC_31b, p_MPC_31b] = simulate_truck(T0_1, @controller_mpc_3, scen2);
 %% Exercise 23: execute simulation with MPC_forces vs MPC_1
 figure(20)
 [T_MPC_12, p_MPC_12, t_sim] = simulate_truck(T0_2, @controller_mpc_1, scen1);
