@@ -46,7 +46,7 @@ function param = compute_controller_base_parameters
     %(21)
 %     L = -(place(A_aug', C_aug', [0,0.35,0.1,0.2,0.4,0.5]))';
 %     L = -(place(A_aug', C_aug', [0,0.3,0.1,0,0.4,0.5]))';
-    L = -(place(A_aug', C_aug', [0.98,0.98,0.9,0.8,0.9,0.95]))';
+    L = -(place(A_aug', C_aug', [0.3,0.2,0.2,0.2,0.3,0.3]))';
     eig(A_aug + L*C_aug)
     
     % put everything together
