@@ -23,37 +23,8 @@ function param = compute_controller_base_parameters
     
     % (3) set point computation
     T_sp(1,1) = -21; T_sp(2,1) = 0.3;
+    [T_sp, p_sp] = steady(A, B, Bd, T_sp, d);
     
-    syms T3 p1 p2
-    
-    eqn1 = (1-A(3,3))*T3-B(3,1)*p1-B(3,2)*p2 == ...
-        (A(3,1)*T_sp(1)+A(3,2)*T_sp(2)+Bd(3,:)*d);
-    eqn2 = -B(1,1)*p1-A(1,3)*T3-B(1,2)*p2 == ...
-        ((A(1,1)-1)*T_sp(1)+A(1,2)*T_sp(2)+Bd(1,:)*d);
-    eqn3 = -B(2,2)*p2-A(2,3)*T3-B(2,1)*p1 == ...
-        (A(2,1)*T_sp(1)+(A(2,2)-1)*T_sp(2)+Bd(2,:)*d);
-    sol = vpasolve([eqn1, eqn2, eqn3], [T3, p1, p2]);
-    T_sp(3,1) = double(sol.T3);
-    p_sp(1,1) = double(sol.p1);
-    p_sp(2,1) = double(sol.p2);
-    
-    clear T3 p1 p2 eqn1 eqn2 eqn3
-    
-%     eqn1 = A(3,1)*T_sp(1)+A(3,2)*T_sp(2)+Bd(3,:)*d;
-%     eqn2 = (A(1,1)-1)*T_sp(1)+A(1,2)*T_sp(2)+Bd(1,:)d;
-%     eqn3 = A(2,1)*T_sp(1)+(A(2,2)-1)*T_sp(2)+Bd(2,:)*d;
-%     dB = B(2,1)*B(1,2)/B(1,1)/B(2,2);
-%     eqn4 = 1/(1-dB)*(dB/B(2,1)*eqn3-eqn2/B(1,1));
-%     m1 = 1/(1-dB)*(dB/B(2,1)*A(2,3)-A(1,3)/B(1,1));
-%     eqn5 = -1/B(2,2)*(eqn3+B(2,1)*eqn4);
-%     m2 = -1/B(2,2)*(A(2,3)+B(2,1)*m1);
-%     eqn6 = eqn1+B(3,1)*eqn4+B(3,2)*eqn5;
-%     m3 = 1-A(3,3)-B(3,1)*m1-B(3,2)*m2;
-%     
-%     T_sp(3,1) = eqn6/m3;
-%     p_sp(1,1) = eqn4+m1*T_sp(3);
-%     p_sp(2,1) = eqn5+m2*T_sp(3);
-
     % (4) system constraints
     Pcons = truck.InputConstraints;
     Tcons = truck.StateConstraints;
@@ -66,11 +37,30 @@ function param = compute_controller_base_parameters
     Q = 1e-1*eye(3);
     R = 2*1e-6*eye(2);
     
+    % (20) augmented system 
+    A_aug =[A Bd;...
+        zeros(3) eye(3)];
+    B_aug = [B;...
+        zeros(3,2)];
+    C_aug = [eye(3) zeros(3)];
+    %(21)
+%     L = -(place(A_aug', C_aug', [0,0.35,0.1,0.2,0.4,0.5]))';
+%     L = -(place(A_aug', C_aug', [0,0.3,0.1,0,0.4,0.5]))';
+    L = -(place(A_aug', C_aug', [0.3,0.2,0.2,0.2,0.3,0.3]))';
+    eig(A_aug + L*C_aug)
+    
     % put everything together
     param.A = A;
     param.B = B;
+    param.C = eye(3);
+    param.Bd = Bd;
+    param.A_aug = A_aug;
+    param.B_aug = B_aug;
+    param.C_aug = C_aug;
+    param.L = L;
     param.Q = Q;
     param.R = R;
+    param.d = d;
     param.T_sp = T_sp;
     param.p_sp = p_sp;
     param.Ucons = Ucons;
